@@ -1,0 +1,34 @@
+﻿# Data files (don't commit actual threat data)
+data/raw/
+data/processed/
+data/enriched/
+data/merged/
+data/reports/
+data/cache/
+
+# Environment and secrets
+.env
+*.env.local
+*.env.production
+
+# Logs
+*.log
+logs/
+
+# System files
+.DS_Store
+Thumbs.db
+*.tmp
+
+# Python (if you add Python later)
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+.Python
+
+# IDE files
+.vscode/
+.idea/
+*.swp
+*.swo
