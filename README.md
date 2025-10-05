@@ -125,6 +125,6 @@ Fill in threat details:
 
 Indicator: IP, domain, or URL
 
-Type: Malware,
+Type: Malware
 
 
