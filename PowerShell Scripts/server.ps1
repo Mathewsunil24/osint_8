@@ -1,33 +1,22 @@
-Add-Type -AssemblyName System.Web
+# Start the Threat Intelligence Backend Server
+Write-Host "🛡️ Starting Threat Intelligence Backend..." -ForegroundColor Green
 
-$listener = New-Object System.Net.HttpListener
-$listener.Prefixes.Add("http://localhost:8080/")
-$listener.Start()
-
-Write-Host "Server running: http://localhost:8080/api/data" -ForegroundColor Green
-
-while ($listener.IsListening) {
-    $context = $listener.GetContext()
-    $request = $context.Request
-    $response = $context.Response
-    
-    if ($request.Url.LocalPath -eq "/api/data") {
-        if (Test-Path "data\processed\threats.json") {
-            $threats = Get-Content "data\processed\threats.json" | ConvertFrom-Json
-            $json = @{
-                total = $threats.Count
-                sources = @{ urlhaus = $threats.Count }
-                types = @{ url = ($threats | Where-Object type -eq "url").Count }
-                threats = $threats | Select-Object -First 10
-            } | ConvertTo-Json
-        } else {
-            $json = '{"error": "No data available"}'
-        }
-        
-        $buffer = [System.Text.Encoding]::UTF8.GetBytes($json)
-        $response.ContentType = "application/json"
-        $response.OutputStream.Write($buffer, 0, $buffer.Length)
-    }
-    
-    $response.Close()
+# Check if Python is available
+try {
+    $pythonVersion = python --version
+    Write-Host "✅ Python found: $pythonVersion" -ForegroundColor Green
+} catch {
+    Write-Host "❌ Python not found. Please install Python." -ForegroundColor Red
+    exit 1
 }
+
+# Install dependencies
+Write-Host "📦 Checking dependencies..." -ForegroundColor Yellow
+pip install -r requirements.txt
+
+# Start the Flask application
+Write-Host "🚀 Starting Flask server on http://localhost:8080" -ForegroundColor Green
+Write-Host "📊 API available at: http://localhost:8080/api/data" -ForegroundColor Cyan
+Write-Host "⏹️  Press Ctrl+C to stop the server" -ForegroundColor Yellow
+
+python .\src\app.py
